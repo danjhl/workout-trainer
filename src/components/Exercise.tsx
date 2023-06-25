@@ -1,47 +1,39 @@
-type Exercise = {
+export type ExerciseProp = {
   name: string,
   time: number,
   reps: number,
   sets: number,
-  active: boolean,
-  done: boolean
+  state: State
 }
 
-type Props = {
-  exercise: Exercise,
-  done: boolean
+export enum State {
+  Ready,
+  Running,
+  Done,
+  Inactive
 }
 
-export default function Exercise(props: Props) {
+export function Exercise(props) {
   return (
     <div>
-      <span class={circle(props.exercise.active)}>
-        <Show when={props.exercise.done}>
-          <div class="text-3xl text-white">&#10003;</div>
-        </Show>
-      </span>
       <div class="block pl-20 mb-10">
-        <h2 class={title(props.exercise.active)}>{props.exercise.name}</h2>
-       <div class={content(props.exercise.active)}>{props.exercise.reps} reps - {props.exercise.sets} sets - {displayTime(props.exercise.time)}</div>
+        <h2 class={title(props.ex.state)}>{props.ex.name}</h2>
+       <div class={content(props.ex.state)}>{props.ex.reps} reps - {props.ex.sets} sets - {displayTime(props.ex.time)}</div>
       </div>
     </div>
   );
 }
 
-function circle(active: boolean): string {
-  let circleColor = active
-    ? 'bg-sky-700'
-    : 'bg-gray-400';
-
-  return `absolute -left-5 flex items-center justify-center w-10 h-10 mt-2 ${circleColor} rounded-full ring-4 ring-white`;
+function title(state: State): string {
+  return 'text-3xl mb-2' + (!inactive(state) ? '' : ' text-gray-400')
 }
 
-function title(active: boolean): string {
-  return 'text-3xl mb-2' + (active ? '' : ' text-gray-400')
+function content(state: State): string {
+  return !inactive(state) ? '' : 'text-gray-400';
 }
 
-function content(active: boolean): string {
-  return active ? '' : 'text-gray-400';
+function inactive(state: State): boolean {
+  return state === State.Inactive || state === State.Done;
 }
 
 function displayTime(time: number): string {
